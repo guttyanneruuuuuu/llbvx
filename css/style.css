@@ -1,0 +1,232 @@
+/* ============ NEON RUSH — style ============ */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #05060f;
+  font-family: 'Rajdhani', sans-serif;
+  touch-action: none;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#game-wrap { position: fixed; inset: 0; }
+
+#game {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+
+.hidden { display: none !important; }
+
+/* ---------- HUD ---------- */
+#hud {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 0;
+}
+
+.hud-left { width: 34%; }
+.hp-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px; letter-spacing: 3px;
+  color: #29f0ff; margin-bottom: 4px;
+  text-shadow: 0 0 8px rgba(41,240,255,.8);
+}
+.hp-bar {
+  height: 10px; border-radius: 5px;
+  background: rgba(41,240,255,.12);
+  border: 1px solid rgba(41,240,255,.4);
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(41,240,255,.25), inset 0 0 8px rgba(0,0,0,.5);
+}
+#hp-fill {
+  height: 100%; width: 100%;
+  background: linear-gradient(90deg, #0af, #29f0ff, #9ff);
+  box-shadow: 0 0 10px #29f0ff;
+  border-radius: 5px;
+  transition: width .25s ease;
+}
+#hp-fill.low { background: linear-gradient(90deg, #f04, #ff4d7d); box-shadow: 0 0 10px #ff2d6a; }
+
+.hud-center { text-align: center; }
+#wave-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px; font-weight: 700; letter-spacing: 4px;
+  color: #ffe14d;
+  text-shadow: 0 0 12px rgba(255,225,77,.8);
+}
+
+.hud-right { width: 34%; text-align: right; }
+#score {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px; font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 14px rgba(255,255,255,.7), 0 0 30px rgba(41,240,255,.6);
+}
+.score-label {
+  font-size: 10px; letter-spacing: 3px; color: rgba(255,255,255,.55);
+}
+
+.combo {
+  position: absolute; top: 22%; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px; font-weight: 900;
+  color: #ff9d2d;
+  text-shadow: 0 0 16px rgba(255,157,45,.9);
+  animation: comboPop .3s ease;
+}
+@keyframes comboPop {
+  0% { transform: translateX(-50%) scale(1.6); opacity: 0; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
+/* ---------- Overlays ---------- */
+.overlay {
+  position: absolute; inset: 0;
+  z-index: 20;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 50% 30%, rgba(20,20,60,.85), rgba(5,6,15,.96));
+  backdrop-filter: blur(4px);
+}
+
+.title-bg-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(41,240,255,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(41,240,255,.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 50% 45%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 45%, black 30%, transparent 75%);
+  animation: gridScroll 6s linear infinite;
+}
+@keyframes gridScroll { from { background-position: 0 0, 0 0; } to { background-position: 0 44px, 44px 0; } }
+
+.game-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(48px, 14vw, 90px);
+  font-weight: 900;
+  line-height: .95;
+  display: flex; flex-direction: column; align-items: center;
+  z-index: 1;
+}
+.t-neon {
+  color: #29f0ff;
+  text-shadow: 0 0 10px #29f0ff, 0 0 40px rgba(41,240,255,.6), 0 0 90px rgba(41,240,255,.35);
+  animation: flicker 3.2s infinite;
+}
+.t-rush {
+  color: #ff2d6a;
+  text-shadow: 0 0 10px #ff2d6a, 0 0 40px rgba(255,45,106,.6), 0 0 90px rgba(255,45,106,.35);
+}
+@keyframes flicker {
+  0%, 92%, 96%, 100% { opacity: 1; }
+  93%, 95% { opacity: .35; }
+}
+
+.subtitle {
+  margin-top: 12px;
+  font-size: 14px; letter-spacing: 8px;
+  color: rgba(255,255,255,.6);
+  z-index: 1;
+}
+
+.neon-btn {
+  margin-top: 44px;
+  padding: 16px 44px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 17px; font-weight: 700; letter-spacing: 4px;
+  color: #29f0ff;
+  background: rgba(41,240,255,.06);
+  border: 2px solid #29f0ff;
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(41,240,255,.4), inset 0 0 14px rgba(41,240,255,.15);
+  cursor: pointer;
+  z-index: 1;
+  animation: btnPulse 1.6s ease-in-out infinite;
+  transition: transform .1s;
+}
+.neon-btn:active { transform: scale(.94); }
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(41,240,255,.4), inset 0 0 14px rgba(41,240,255,.15); }
+  50% { box-shadow: 0 0 34px rgba(41,240,255,.75), inset 0 0 22px rgba(41,240,255,.3); }
+}
+
+.howto {
+  margin-top: 40px;
+  display: flex; gap: 20px;
+  font-size: 13px; color: rgba(255,255,255,.7);
+  z-index: 1;
+}
+.key {
+  display: inline-block;
+  padding: 2px 8px; margin-right: 4px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 6px;
+  font-weight: 700; color: #ffe14d;
+}
+
+.hiscore {
+  margin-top: 26px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px; letter-spacing: 2px;
+  color: rgba(255,225,77,.85);
+  text-shadow: 0 0 10px rgba(255,225,77,.5);
+  z-index: 1;
+}
+
+/* ---------- Game Over ---------- */
+.go-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(36px, 11vw, 64px);
+  font-weight: 900;
+  color: #ff2d6a;
+  text-shadow: 0 0 14px #ff2d6a, 0 0 50px rgba(255,45,106,.5);
+  animation: goSlam .5s cubic-bezier(.2,2.4,.4,1);
+}
+@keyframes goSlam {
+  0% { transform: scale(2.4); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.go-stats {
+  margin-top: 32px;
+  width: min(320px, 78vw);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.go-row {
+  display: flex; justify-content: space-between;
+  padding: 10px 18px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  font-size: 15px; letter-spacing: 2px;
+  color: rgba(255,255,255,.65);
+}
+.go-row b {
+  font-family: 'Orbitron', sans-serif;
+  color: #fff; font-size: 17px;
+  text-shadow: 0 0 8px rgba(41,240,255,.7);
+}
+
+.new-record {
+  margin-top: 18px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px; font-weight: 900; letter-spacing: 3px;
+  color: #ffe14d;
+  text-shadow: 0 0 16px rgba(255,225,77,.9);
+  animation: recordBlink .5s step-start infinite alternate;
+}
+@keyframes recordBlink { from { opacity: 1; } to { opacity: .45; } }
